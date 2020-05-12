@@ -1,0 +1,34 @@
+{% extends "chat/base.html" %}
+
+{% load static %}
+
+
+{% block title %}
+    Chat
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="{% static "chat/css/tribute.css" %}">
+    <script src="{% static "chat/js/tribute.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+        <h2 id="chat-name">Pretty Chat</h2>
+
+        <h4 id="greeting">Hello, {{ nickname }}</h4>
+        <div id="chat-window"></div>
+
+        <div id="input-submit">
+            <input id="chat-message-input" type="text" size="50">
+            <input id="chat-message-submit" type="button" value="Send">
+        </div>
+
+        <form id="logout-form" action="/logout">
+            <input id="logout" type="submit" value="Logout"/>
+        </form>
+
+    <script type="text/javascript" src="{% static "chat/js/main.js" %}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+{% endblock %}

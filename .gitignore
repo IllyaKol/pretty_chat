@@ -1,0 +1,10 @@
+*.pyc
+.idea
+.venv
+venv/
+logs
+node_modules
+tmp
+.DS_Store
+*.log
+misc/
