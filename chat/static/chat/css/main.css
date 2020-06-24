@@ -1,38 +1,3 @@
-.content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    overflow-y: scroll;
-}
-
-#chat-window {
-    margin: 3% auto 2% auto;
-    padding: 10px;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 3px;
-    width: 80%;
-    height: 50%;
-    overflow-y: scroll;
-}
-
-#nickname {
-    font-weight: 600;
-}
-
-#chat-name {
-    text-align: center;
-    margin-top: 2%;
-}
-
-#greeting {
-    text-align: center;
-}
-
 #logout-form {
     margin: 2% auto 2% auto;
     border-style: solid;
@@ -60,23 +25,20 @@
 }
 
 #chat-message-input {
+    border: none;
     padding: 3px 15px;
     font-size: 16px;
-    width: 70%;
+    width: 90%;
+    outline: none;
 }
 
 #chat-message-submit {
-    background-color: #4CAF50;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-    border-radius: 3px;
-    color: white;
-    padding: 5px 15px;
+    border: none;
     text-align: center;
     font-size: 16px;
-    width: 29%;
+    width: 10%;
     cursor: pointer;
+    outline: none;
 }
 
 .section-register-inner {
@@ -89,4 +51,102 @@
     margin: 10% auto 0 auto;
     width: 30%;
     height: 50%;
+}
+
+
+.info-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    padding: 2% 0;
+    background-color: #bad5dc;
+}
+
+.body-content {
+    position: fixed;
+    top: 0;
+    left: 20%;
+    width: 80%;
+    height: 100%;
+    background-color: #e3e8ee;
+}
+
+.chat-head {
+    position: fixed;
+    width: 80%;
+    height: 7%;
+    background-color: #b4b4af;
+}
+
+.chat-window {
+    position: fixed;
+    top: 7%;
+    width: 80%;
+    height: 83%;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.suggestion {
+    position: fixed;
+    top: 80%;
+    width: 80%;
+    height: 3%;
+    z-index: 999;
+}
+
+.input-group {
+    position: fixed;
+    top: 93%;
+    height: 7%;
+    background-color: #FFFFFF;
+}
+
+.user-data {
+    display: flex;
+    justify-content: center;
+}
+
+.avatar {
+    border-style: solid;
+    border-color: #4CAF50;
+    border-radius: 50%;
+    margin: 3%;
+    overflow-y: scroll;
+
+}
+
+.user-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.users {
+    position: fixed;
+    top: 30%;
+    height: 68%;
+    width: 20%;
+}
+
+#msg {
+    margin-bottom: 5px;
+    float: right;
+    width: 300px;
+    padding: 0 2px;
+    border-style: solid;
+    border-color: #000000;
+    border-radius: 5px;
+    border-width: thin;
+    background-color: #f2d2ec;
+    justify-content: flex-start;
+
+}
+
+#message {
+    width: 100%;
+    display: flex;
+    word-wrap: break-word;
 }

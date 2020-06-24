@@ -2,12 +2,17 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from .utils import get_all_users
 from .utils import get_recipients
+from .utils import save_online_user
+from .utils import get_online_users
+from .utils import delete_online_user
 
 
 class PrettyChatConsumer(AsyncWebsocketConsumer):
     async def connect(self) -> None:
         self.user = self.scope['user']
+        self.groups.append(self.user.username)
         self.group_name = 'chat_pretty_chat'
 
         await self.channel_layer.group_add(
@@ -16,6 +21,8 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+
+        await save_online_user(self.user.username)
 
         await self.receive(
             text_data=json.dumps({
@@ -27,6 +34,8 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def disconnect(self, code) -> None:
+        await delete_online_user(self.user.username)
+
         await self.receive(
             text_data=json.dumps({
                 'event': 'Send',
@@ -46,6 +55,11 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
         message = data['message']
         nickname = data['nickname']
 
+        online_users = await get_online_users()
+        all_users = await get_all_users()
+        all_users = sorted(all_users)
+
+
         recipients = await get_recipients(message)
 
         if 'type' not in data:
@@ -60,7 +74,9 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
                 'data_type': data_type,
                 'message': message,
                 'nickname': nickname,
-                'recipients': recipients
+                'recipients': recipients,
+                'all_users': all_users,
+                'online_users': online_users
             }
         )
 
@@ -69,6 +85,8 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
         nickname = event['nickname']
         data_type = event['data_type']
         recipients = event['recipients']
+        all_users = event['all_users']
+        online_users = event['online_users']
 
         await self.send(
             text_data=json.dumps({
@@ -76,6 +94,8 @@ class PrettyChatConsumer(AsyncWebsocketConsumer):
                 'type': data_type,
                 'message': message,
                 'nickname': nickname,
-                'recipients': recipients
+                'recipients': recipients,
+                'all_users': all_users,
+                'online_users': online_users
             })
         )

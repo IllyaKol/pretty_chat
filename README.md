@@ -25,4 +25,5 @@ python manage.py runserver
 
 ## Django Settings
 
-> PSQL DATABASES: set host, name database and user with password. CHANNEL_LAYERS: set host and port where running redis-server
+> PSQL DATABASES: set host, name database and user with password.
+> REDIS DATABASES: set REDIS_HOST, REDIS_PORT and REDIS_DB where running redis-server

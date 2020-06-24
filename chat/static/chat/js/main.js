@@ -1,10 +1,13 @@
 const host = window.location.host;
 loadMessages();
 const maxInputMessageLength = 64;
-const userName = document.querySelector('#greeting').innerHTML.split(',')[1].trim();
+const userName = document.querySelector('#greeting').innerHTML;
 const inputMessage = document.querySelector('#chat-message-input');
-const chatWindow = document.querySelector('#chat-window');
+const chatWindow = document.querySelector('.chat-window');
 const submitButton = document.querySelector('#chat-message-submit');
+const usersList = document.querySelector('.users');
+
+var users = [];
 
 
 let chatSocket = new WebSocket(
@@ -17,6 +20,22 @@ chatSocket.onmessage = function (event) {
     let nickname = data['nickname'];
     let type = data['type'];
     let recipients = data['recipients'];
+    let allUsers = data['all_users'];
+    let onlineUsers = data['online_users'];
+
+    for (let i = 0; i < allUsers.length; i++) {
+        let user = allUsers[i];
+        if (!users.includes(user) && user !== userName) {
+            appendUser(user);
+            users.push(user)
+        }
+        if (onlineUsers.includes(user)) {
+            setUserOnline(user)
+        } else {
+            setUserOffline(user)
+        }
+    }
+
 
     if (type === 'information' && userName !== nickname) {
         let informationDom = buildInfo(nickname, message);
@@ -54,22 +73,26 @@ inputMessage.maxLength = maxInputMessageLength;
 
 submitButton.onclick = function () {
     let message = inputMessage.value;
-    chatSocket.send(JSON.stringify({
-        'message': message,
-        'nickname': userName
-    }));
-    saveMessage(message);
-    inputMessage.value = '';
+    if (message.replace(/\s/g, '').length > 0) {
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'nickname': userName
+        }));
+        saveMessage(message);
+        inputMessage.value = '';
+    }
 };
 
 
 let tribute = new Tribute({
+    menuContainer: document.getElementsByClassName('suggestion')[0],
+    positionMenu: false,
+    menuItemLimit: 3,
     values: function (text, cb) {
         remoteUsersSearch(text, users => cb(users));
     },
 });
 tribute.attach(inputMessage);
-
 
 
 function saveMessage(message) {
@@ -103,19 +126,19 @@ function loadMessages() {
 }
 
 function remoteUsersSearch(text, cb) {
-  let xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-          var data = JSON.parse(xhr.response)['data'];
-        cb(data);
-      } else if (xhr.status === 403) {
-        cb([]);
-      }
-    }
-  };
-  xhr.open("GET", "http://" + host + "/api/users/",true);
-  xhr.send();
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.response)['data'];
+                cb(data);
+            } else if (xhr.status === 403) {
+                cb([]);
+            }
+        }
+    };
+    xhr.open("GET", "http://" + host + "/api/users/", true);
+    xhr.send();
 }
 
 function generateRequest(method, url, async = true) {
@@ -152,21 +175,26 @@ function buildMessage(nickname, message, recipients) {
     let newDiv = document.createElement("div");
     newDiv.setAttribute("id", "message");
 
-    let newParagraph = document.createElement("p");
+    let nickName = document.createElement("span");
+    nickName.setAttribute("id", "nickname");
+    nickName.innerHTML = nickname + ':';
 
-    let newFirstSpan = document.createElement("span");
-    newFirstSpan.setAttribute("id", "nickname");
-    newFirstSpan.innerHTML = nickname + ': ';
+    let messsageSpan = document.createElement("span");
+    messsageSpan.setAttribute("id", "msg");
+    messsageSpan.innerHTML = message;
+    messsageSpan.style.cssText = 'display:inline-block';
+    if (nickname === userName) {
+        messsageSpan.style.cssText += 'margin-left: auto;';
+        newDiv.appendChild(messsageSpan);
 
-    let newSecondSpan = document.createElement("span");
-    newSecondSpan.setAttribute("id", "message");
-    newSecondSpan.innerHTML = message;
-    newSecondSpan.style.cssText = 'display: inline-block';
-
-    newParagraph.appendChild(newFirstSpan);
-    newParagraph.appendChild(newSecondSpan);
-
-    newDiv.appendChild(newParagraph);
+        let img = document.createElement("img");
+        img.setAttribute("class", "avatar");
+        img.setAttribute("alt", "Italian Trulli");
+        img.src = 'https://picsum.photos/seed/picsum/40/40';
+    } else {
+        newDiv.appendChild(nickName);
+        newDiv.appendChild(messsageSpan);
+    }
 
     return newDiv
 }
@@ -199,8 +227,7 @@ function checkMessageLength(event) {
         )
     } else {
         submitButton.disabled = false;
-        submitButton.style.cssText = 'background-color: #4CAF50';
-        inputMessage.style.cssText = 'border-color: initial; color:black;';
+        inputMessage.style.cssText = 'color:black;';
     }
 }
 
@@ -215,4 +242,47 @@ function sendToast(text, color, time = 5000, position = 'right', stopOnFocus = t
 
     let myToast = Toastify(options);
     myToast.showToast();
+}
+
+function appendUser(user) {
+    let newUser = document.createElement('div');
+    newUser.setAttribute('class', 'user-data');
+
+    let img = document.createElement('img');
+    img.src = "https://picsum.photos/seed/picsum/40/40";
+    img.setAttribute('class', 'avatar');
+    img.style.cssText = 'border-color:#ffffff;';
+
+    let userName = document.createElement('div');
+    userName.innerHTML = user;
+    userName.setAttribute('class', 'user-name');
+
+    newUser.appendChild(img);
+    newUser.appendChild(userName);
+
+    usersList.appendChild(newUser);
+}
+
+
+function findUserAvatar(user) {
+    let currentUser;
+    let users = document.getElementsByClassName('user-name');
+
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].textContent === user) {
+            currentUser = users[i];
+            break;
+        }
+    }
+    return currentUser.parentNode.getElementsByTagName('img')[0];
+}
+
+function setUserOnline(user) {
+    let img = findUserAvatar(user);
+    img.style.cssText = 'border-color:#4CAF50;';
+}
+
+function setUserOffline(user) {
+    let img = findUserAvatar(user);
+    img.style.cssText = 'border-color:#ffffff;';
 }

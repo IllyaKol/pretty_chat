@@ -15,19 +15,35 @@
 {% endblock %}
 
 {% block content %}
-        <h2 id="chat-name">Pretty Chat</h2>
+    <div class="info-content">
 
-        <h4 id="greeting">Hello, {{ nickname }}</h4>
-        <div id="chat-window"></div>
-
-        <div id="input-submit">
-            <input id="chat-message-input" type="text" size="50">
-            <input id="chat-message-submit" type="button" value="Send">
+        <div class="user-data">
+            <img src="https://picsum.photos/seed/picsum/40/40" class="avatar">
+            <div id="greeting" class="user-name">{{ nickname }}</div>
         </div>
 
         <form id="logout-form" action="/logout">
             <input id="logout" type="submit" value="Logout"/>
         </form>
+
+        <div class="users">
+        </div>
+
+    </div>
+
+    <div class="body-content">
+        <div class="chat-head">
+        </div>
+
+        <div class="chat-window">
+        </div>
+        <div class="suggestion"></div>
+
+        <div class="input-group">
+            <input id="chat-message-input" type="text" size="50" placeholder="Type your message...">
+            <input id="chat-message-submit" type="button" value="Send">
+        </div>
+    </div>
 
     <script type="text/javascript" src="{% static "chat/js/main.js" %}"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
